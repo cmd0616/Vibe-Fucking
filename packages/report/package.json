@@ -1,0 +1,14 @@
+{
+  "name": "@vibe-fucking/report",
+  "version": "0.1.0",
+  "description": "Vibe-Fucking 报告渲染器（terminal / json）",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vibe-fucking/core": "*"
+  }
+}

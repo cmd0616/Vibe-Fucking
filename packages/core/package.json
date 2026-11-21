@@ -1,0 +1,11 @@
+{
+  "name": "@vibe-fucking/core",
+  "version": "0.1.0",
+  "description": "Vibe-Fucking 规则引擎：调度、密度归一化、屎山指数计算",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

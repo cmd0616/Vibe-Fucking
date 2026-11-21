@@ -1,0 +1,14 @@
+{
+  "name": "@vibe-fucking/rules",
+  "version": "0.1.0",
+  "description": "Vibe-Fucking 内置屎山规则库",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vibe-fucking/core": "*"
+  }
+}

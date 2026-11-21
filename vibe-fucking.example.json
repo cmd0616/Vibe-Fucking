@@ -1,0 +1,40 @@
+{
+  "rules": {
+    "no-console-leftover": { "enabled": true, "severity": "warn", "baseline": 5 },
+    "no-hallucinated-import": { "enabled": true, "severity": "error", "baseline": 3, "options": { "checkRegistry": false } },
+    "no-any-spam": { "enabled": true, "severity": "warn", "baseline": 25 },
+    "no-assert-abuse": { "enabled": true, "severity": "warn", "baseline": 15 },
+    "no-todo-graveyard": { "enabled": true, "severity": "info", "baseline": 3 },
+    "no-test-desert": { "enabled": true, "severity": "error", "options": { "minRatio": 0.1 } },
+    "no-unused-deps": { "enabled": true, "severity": "warn", "baseline": 2 },
+    "no-god-file": { "enabled": true, "severity": "warn", "baseline": 1, "options": { "maxLines": 600 } },
+    "no-pure-forwarder": { "enabled": true, "severity": "warn", "baseline": 6 },
+    "no-god-function": { "enabled": true, "severity": "warn", "baseline": 2, "options": { "maxLines": 80 } },
+    "no-deep-nesting": { "enabled": true, "severity": "warn", "baseline": 3, "options": { "maxDepth": 4 } },
+    "no-empty-catch": { "enabled": true, "severity": "error", "baseline": 1 },
+    "no-missing-await": { "enabled": true, "severity": "error", "baseline": 1 },
+    "no-floating-promise": { "enabled": true, "severity": "warn", "baseline": 1 },
+    "no-duplicate-logic": { "enabled": true, "severity": "warn", "baseline": 8 },
+    "no-single-impl-interface": { "enabled": true, "severity": "error", "baseline": 4 },
+    "no-unused-export": { "enabled": true, "severity": "warn", "baseline": 6 }
+  },
+  "dimensions": {
+    "structure": 0.2,
+    "abstraction": 0.25,
+    "errorHandling": 0.15,
+    "typing": 0.1,
+    "hygiene": 0.2,
+    "engineering": 0.1
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/*.gen.ts",
+    "**/*.d.ts"
+  ],
+  "report": {
+    "maxIssues": 10
+  }
+}

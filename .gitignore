@@ -1,0 +1,15 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+*.log
+report.html
+report.json
+
+# 校准用的第三方仓库浅克隆（非本项目源码）
+calib/
+
+# IDE / 工具本地数据
+.codebuddy/
+.idea/
+.vscode/

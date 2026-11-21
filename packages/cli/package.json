@@ -1,0 +1,17 @@
+{
+  "name": "vibe-fucking",
+  "version": "0.1.0",
+  "description": "Shit Mountain Detector for Vibe-Coded Projects",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "vf": "src/index.ts"
+  },
+  "main": "src/index.ts",
+  "dependencies": {
+    "@vibe-fucking/analyzer-ts": "*",
+    "@vibe-fucking/core": "*",
+    "@vibe-fucking/report": "*",
+    "@vibe-fucking/rules": "*"
+  }
+}
