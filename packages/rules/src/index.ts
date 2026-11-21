@@ -16,8 +16,10 @@ import { noAssertAbuse } from './no-assert-abuse';
 import { noTodoGraveyard } from './no-todo-graveyard';
 import { noTestDesert } from './no-test-desert';
 import { noUnusedDeps } from './no-unused-deps';
+import { noDeadCode } from './no-dead-code';
+import { noCommentedOutCode } from './no-commented-out-code';
 
-/** v0.1 内置规则集（17 条），覆盖 L1 词法 / L2 语法树 / L3 类型符号三层 */
+/** 内置规则集（19 条），覆盖 L1 词法 / L2 语法树 / L3 类型符号三层 */
 export const allRules: Rule[] = [
   // L1 词法
   noConsoleLeftover,
@@ -28,6 +30,7 @@ export const allRules: Rule[] = [
   noTestDesert,
   noUnusedDeps,
   noGodFile,
+  noCommentedOutCode,
   // L2 语法树
   noPureForwarder,
   noGodFunction,
@@ -36,6 +39,7 @@ export const allRules: Rule[] = [
   noMissingAwait,
   noFloatingPromise,
   noDuplicateLogic,
+  noDeadCode,
   // L3 类型与跨文件符号
   noSingleImplInterface,
   noUnusedExport,
@@ -63,4 +67,6 @@ export {
   noTodoGraveyard,
   noTestDesert,
   noUnusedDeps,
+  noDeadCode,
+  noCommentedOutCode,
 };

@@ -186,8 +186,8 @@ Audit Vibe Coding 等同类产品，另有 CodeRabbit、SonarCloud、DeepSource 
 | ⭐ ✅ `vf/no-todo-graveyard` | TODO/FIXME 堆积 | 基线 3 个/千行，级别 info |
 | `vf/no-magic-numbers` | 魔法数字 / 字符串 | 业务常量散落 |
 | `vf/no-lazy-naming` | 垃圾命名 | `a` / `tmp` / `data2` / `obj` / `res` |
-| ⭐ `vf/no-dead-code` | 不可达代码、注释掉的代码块 | AI 留的"备用实现"。**2026 大规模扫描显示死代码在 63% 的 AI 仓库出现、注释掉代码 59%——比多数已上线规则更普遍，v0.2 最高优先级** |
-| ⭐ `vf/no-commented-out-code` | 大段被注释掉的代码 | "留着以后用"的幻觉，v0.2 与 no-dead-code 一并实现 |
+| ⭐ ✅ `vf/no-dead-code` | return/throw 后的不可达代码 + 未使用局部变量 | AI 留的"备用实现"。**2026 大规模扫描显示死代码在 63% 的 AI 仓库出现——比多数已上线规则更普遍** |
+| ⭐ ✅ `vf/no-commented-out-code` | 大段被注释掉的代码（跳过 JSDoc） | "留着以后用"的幻觉，实测 59% 普遍度 |
 | `vf/no-comment-noise` | 注释复述代码 | `// i++` 风格注释 |
 
 #### F. 工程类（engineering）
@@ -394,7 +394,7 @@ export default defineRule({
 | 版本 | 主题 | 内容 |
 |---|---|---|
 | v0.1 | 跑通闭环 | ✅ 17 条 MVP 规则全部实现 + 终端报告 + SMI 评分 + 配置加载。剩余工作：阈值校准 |
-| v0.2 | 可用性 + 校准 | HTML 报告、`vibe-fucking.config.ts`、规则扩至 30 条（补齐 `no-dead-code`/`no-commented-out-code` 等高频项）、**3b 真实仓库校准 SMI 尺度与阈值**、性能优化 |
+| v0.2（当前） | ✅ 19 条规则（+`no-dead-code`/`no-commented-out-code`，含第 5 个误报源修复）；剩余：HTML 报告、SMI bands 定稿、`vibe-fucking.config.ts` |
 | v0.3 | 生态 | 插件 API、社区规则注册机制、`vf fix`（安全规则自动修复） |
 | v0.5 | 多语言 | Python 项目分析器（轻量 AST）、增量扫描 |
 | v1.0 | 稳定 | 规则集冻结 major、GitHub Action 上架 Marketplace、规则文档站 |
@@ -480,6 +480,7 @@ ogbuilds 本身就是"确定性、无 LLM、可复现"的扫描器（SaaS 形态
 2. **L1 规则只剥 `//` 行注释，没剥块注释/JSDoc** —— 最大误报源。新增 `codeLines()` 统一剥离跨行块注释并保持行号对齐。
 3. **`import` 提取正则未锚定行首** —— 会匹配到字符串字面量内部（实测把 `'é 🌍'` 当成包名）。改为锚定 `^\s*import|export ... from`，并补充 `test-d/`（类型测试目录）判定。
 4. **`@/` 路径别名被当成幻觉依赖** —— 实验组 `import ... from '@/app'` 被误报为未声明包。排除 `@/`、`~/`、`#/` 前缀及单独的 `@scope`。修复后实验组 SMI 25→24、工程维度 42→38。
+5. **解构模式被当成未使用局部变量**（v0.2 新增规则实测发现）—— `no-dead-code` 首版用 `VariableDeclaration.getName()`，对 `const {status = 200} = opts` 返回整段模式文本 `{status = 200, ...}`，不在标识符计数里 → 对照组炸出 **1147** 条误报。修复：只处理 `Node.isIdentifier(nameNode)` 的简单声明。修复后对照组归零，实验组 57 条经抽验为真死代码（`router = useRouter()` 声明后未用等）。
 
 ### 9.8 区分度验证：通过 ✅
 

@@ -100,6 +100,7 @@ npm run vf -- explain no-single-impl-interface
 | `no-any-spam` | 类型 | warn | `any` 密度过高 |
 | `no-assert-abuse` | 类型 | warn | `as` 断言密度过高 |
 | `no-todo-graveyard` | 卫生 | info | TODO / FIXME 堆积 |
+| `no-commented-out-code` | 卫生 | info | 大段被注释掉的代码（跳过 JSDoc） |
 | `no-test-desert` | 工程 | error | 项目缺少测试或测试占比过低 |
 | `no-unused-deps` | 工程 | warn | 声明但从未 import 的依赖 |
 | `no-god-file` | 结构 | warn | 单文件过长（默认 > 500 行） |
@@ -115,6 +116,7 @@ npm run vf -- explain no-single-impl-interface
 | `no-missing-await` | 错误处理 | error | 调 async 函数没 await，把 Promise 当值用 |
 | `no-floating-promise` | 错误处理 | warn | async 调用被整个丢弃 |
 | `no-duplicate-logic` | 结构 | warn | 近似重复逻辑（20 token 窗口，重叠区间已合并） |
+| `no-dead-code` | 卫生 | warn | return/throw 后的不可达代码 + 未使用的局部变量 |
 
 **L3 类型与跨文件符号**
 
@@ -197,6 +199,7 @@ fixtures/              规则测试用的真·屎山样例
    | `no-duplicate-logic` | 1450 | 13 | 8064 行测试文件被当生产代码 |
    | `no-assert-abuse` | 417 | 53 | JSDoc 英文散文被当成类型断言 |
    | `no-hallucinated-import` | 9 | 0 | JSDoc `@example` / 未锚定的 import 正则 / `@/` 路径别名 |
+   | `no-dead-code` | 1147 | 0 | 解构模式 `getName()` 返回整段文本，非标识符 |
 3. **区分度验证**：
 
    | | 对照 `ky`（优质库，29534 行） | 实验 `t-sra`（AI 生成，3312 行） |
@@ -227,8 +230,8 @@ node scripts/calibrate.mjs <repo1> [repo2 ...]
 
 | 版本 | 内容 |
 |---|---|
-| v0.1（当前） | ✅ 17 条规则 + 终端报告 + SMI + 配置；三项误报修复 + 区分度验证完成。剩余：扩大实验组样本 |
-| v0.2 | `no-dead-code` / `no-commented-out-code`（实测 63%/59% 普遍度）、HTML 报告、规则扩至 30 条、SMI bands 定稿、`vibe-fucking.config.ts` |
+| v0.1 | ✅ 17 条规则 + 终端报告 + SMI + 配置；四项误报修复 + 区分度验证完成 |
+| v0.2（当前） | ✅ 19 条规则（+`no-dead-code`/`no-commented-out-code`）；剩余：HTML 报告、SMI bands 定稿、`vibe-fucking.config.ts` |
 | v0.3 | 插件 API、社区规则机制、`vf fix`（安全规则自动修复） |
 | v0.5 | Python 项目分析器、增量扫描 |
 | v1.0 | 规则集稳定、GitHub Action 上架 |

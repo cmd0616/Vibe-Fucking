@@ -122,12 +122,22 @@ export interface AsyncCallIssue {
   snippet: string;
 }
 
+export interface DeadCodeRef {
+  file: string;
+  line: number;
+  /** unreachable = 终止语句之后的语句；unused-local = 声明后从未被读取的局部变量 */
+  kind: 'unreachable' | 'unused-local';
+  name: string;
+  snippet: string;
+}
+
 /** L2：语法树结构查询（由 analyzer-ts 实现） */
 export interface AstIndex {
   pureForwarders(): ForwarderRef[];
   functions(): FunctionInfo[];
   catches(): CatchInfo[];
   asyncCallIssues(): AsyncCallIssue[];
+  deadCode(): DeadCodeRef[];
 }
 
 /* ------------------------------ 规则与上下文 ------------------------------ */

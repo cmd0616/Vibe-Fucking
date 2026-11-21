@@ -5,6 +5,7 @@
     "no-any-spam": { "enabled": true, "severity": "warn", "baseline": 25 },
     "no-assert-abuse": { "enabled": true, "severity": "warn", "baseline": 15 },
     "no-todo-graveyard": { "enabled": true, "severity": "info", "baseline": 3 },
+    "no-commented-out-code": { "enabled": true, "severity": "info", "baseline": 2, "options": { "minLines": 3, "codeRatio": 0.5 } },
     "no-test-desert": { "enabled": true, "severity": "error", "options": { "minRatio": 0.1 } },
     "no-unused-deps": { "enabled": true, "severity": "warn", "baseline": 2 },
     "no-god-file": { "enabled": true, "severity": "warn", "baseline": 1, "options": { "maxLines": 600 } },
@@ -15,6 +16,7 @@
     "no-missing-await": { "enabled": true, "severity": "error", "baseline": 1 },
     "no-floating-promise": { "enabled": true, "severity": "warn", "baseline": 1 },
     "no-duplicate-logic": { "enabled": true, "severity": "warn", "baseline": 8 },
+    "no-dead-code": { "enabled": true, "severity": "warn", "baseline": 2 },
     "no-single-impl-interface": { "enabled": true, "severity": "error", "baseline": 4 },
     "no-unused-export": { "enabled": true, "severity": "warn", "baseline": 6 }
   },

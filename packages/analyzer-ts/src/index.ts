@@ -4,6 +4,7 @@ import type {
   AstIndex,
   AsyncCallIssue,
   CatchInfo,
+  DeadCodeRef,
   ForwarderRef,
   FunctionInfo,
   InterfaceImpl,
@@ -311,6 +312,65 @@ export function createTsAnalyzer(rootDir: string, files: SourceFile[]): TsAnalyz
           });
         }
       }
+      return out;
+    },
+
+    deadCode(): DeadCodeRef[] {
+      const out: DeadCodeRef[] = [];
+
+      for (const sf of project.getSourceFiles()) {
+        if (sf.isDeclarationFile()) continue;
+        const rel = relOf(sf.getFilePath());
+
+        // 1) 终止语句之后的不可达代码：只看 return / throw，避开 switch 里 break 的歧义
+        for (const block of sf.getDescendantsOfKind(SyntaxKind.Block)) {
+          const stmts = block.getStatements();
+          const stop = stmts.findIndex((s) => Node.isReturnStatement(s) || Node.isThrowStatement(s));
+          if (stop === -1) continue;
+          for (const dead of stmts.slice(stop + 1)) {
+            out.push({
+              file: rel,
+              line: dead.getStartLineNumber(),
+              kind: 'unreachable',
+              name: '',
+              snippet: dead.getText().split('\n')[0].trim().slice(0, 120),
+            });
+          }
+        }
+
+        // 2) 未使用的局部变量：统计每个标识符在函数体内的出现次数
+        // 名字只出现一次（声明本身）且非 _ 前缀，视为死变量
+        for (const entry of fnEntries) {
+          const body = getFunctionBody(entry.node);
+          if (!body) continue;
+
+          const counts = new Map<string, number>();
+          for (const id of body.getDescendantsOfKind(SyntaxKind.Identifier)) {
+            const name = id.getText();
+            counts.set(name, (counts.get(name) ?? 0) + 1);
+          }
+
+          for (const decl of body.getDescendantsOfKind(SyntaxKind.VariableDeclaration)) {
+            // 只处理简单标识符；解构模式 getName() 返回的是 "{a = 1, b}" 这种整段文本，
+            // 不在标识符计数里 → 会 100% 误报（实测对照组 1147 条全是这个）
+            const nameNode = decl.getNameNode();
+            if (!Node.isIdentifier(nameNode)) continue;
+
+            const name = nameNode.getText();
+            if (!name || name.startsWith('_')) continue;
+            if ((counts.get(name) ?? 0) <= 1) {
+              out.push({
+                file: rel,
+                line: decl.getStartLineNumber(),
+                kind: 'unused-local',
+                name,
+                snippet: decl.getText().split('\n')[0].trim().slice(0, 120),
+              });
+            }
+          }
+        }
+      }
+
       return out;
     },
   };
