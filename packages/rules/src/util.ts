@@ -1,7 +1,12 @@
 import type { SourceFile } from '@vibe-fucking/core';
 
-/** 测试文件路径形态：*.test.ts / *.spec.tsx / __tests__/ / tests/ / test-d/（类型测试） */
-export const TEST_PATH = /\.(test|spec)\.[cm]?[jt]sx?$|(^|\/)(__tests__|tests?|test-d|specs?)\//;
+/**
+ * 测试/夹具路径形态。
+ * fixtures/ 是 lint 规则或项目的测试夹具，里面的"未使用变量""重复代码"是故意写的样本，
+ * 不是生产屎山——type-fest 曾因此在对照组炸出 195 条假死代码。
+ */
+export const TEST_PATH =
+  /\.(test|spec)\.[cm]?[jt]sx?$|(^|\/)(__tests__|tests?|test-d|specs?|fixtures?|__fixtures__)\//;
 
 /**
  * 是否为测试文件。

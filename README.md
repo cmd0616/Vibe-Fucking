@@ -174,6 +174,7 @@ packages/
 └── cli/          vf 命令入口与退出码
 scripts/probe.mjs       Step 0 探针：验证指纹假设、测阈值量级（零依赖）
 scripts/calibrate.mjs   3b 校准：对多仓库跑 vf scan 并输出对比表
+scripts/fetch-repo.mjs  通过 GitHub API 逐文件下载仓库（绕开 git 协议断连）
 calib/                 真实校准样本（浅克隆的对照/实验组仓库）
 fixtures/              规则测试用的真·屎山样例
 ```
@@ -200,12 +201,16 @@ fixtures/              规则测试用的真·屎山样例
    | `no-assert-abuse` | 417 | 53 | JSDoc 英文散文被当成类型断言 |
    | `no-hallucinated-import` | 9 | 0 | JSDoc `@example` / 未锚定的 import 正则 / `@/` 路径别名 |
    | `no-dead-code` | 1147 | 0 | 解构模式 `getName()` 返回整段文本，非标识符 |
-3. **区分度验证**：
+   | `.d.ts` 误纳入 | 324 文件 | 0 | `globToRegExp` 哨兵冲突，默认 ignore 从未生效 |
+   | 夹具代码 | 180 | 0 | `fixtures/` 未过滤 + 跨函数引用的模块级变量被误判 |
+3. **区分度验证（n=7，2 对照 + 5 实验）**：
 
-   | | 对照 `ky`（优质库，29534 行） | 实验 `t-sra`（AI 生成，3312 行） |
+   | 组 | 仓库 | SMI |
    |---|---|---|
-   | SMI | **3** 清风徐来 | **24** 略有异味 |
-   | 结构 / 抽象 / 工程 | 4 / 3 / 0 | 50 / 20 / 38 |
+   | 对照 | `ky` / `type-fest` | **3 / 4** |
+   | 实验 | `fulling` / `pixel_pokemon` / `t-sra` / `tower-of-time-game` / `aldi-prices` | **14 / 23 / 27 / 32 / 38** |
+
+   无重叠。注意 `fulling` 虽自称"100% AI 生成"但仅 14 分——工具测代码特征，不测作者身份。
 
 ### 局限（v0.1 尚未解决）
 
@@ -220,8 +225,11 @@ fixtures/              规则测试用的真·屎山样例
 # 量级探针（零依赖，只判断量级、不作判定）
 node scripts/probe.mjs <AI 项目> <已知优质项目>
 
+# 下载真实仓库（git clone 断连时的替代方案）
+node scripts/fetch-repo.mjs <owner/repo> calib/<目录名>
+
 # 精确校准对比表（对多个仓库跑 vf scan 并汇总）
-node scripts/calibrate.mjs <repo1> [repo2 ...]
+node scripts/calibrate.mjs calib/<repo1> calib/<repo2> ...
 ```
 
 ---

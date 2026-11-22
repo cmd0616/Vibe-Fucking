@@ -340,9 +340,16 @@ export function createTsAnalyzer(rootDir: string, files: SourceFile[]): TsAnalyz
 
         // 2) 未使用的局部变量：统计每个标识符在函数体内的出现次数
         // 名字只出现一次（声明本身）且非 _ 前缀，视为死变量
+        const globalCounts = new Map<string, number>();
+        for (const id of sf.getDescendantsOfKind(SyntaxKind.Identifier)) {
+          const name = id.getText();
+          globalCounts.set(name, (globalCounts.get(name) ?? 0) + 1);
+        }
+
         for (const entry of fnEntries) {
           const body = getFunctionBody(entry.node);
           if (!body) continue;
+          if (relOf(body.getSourceFile().getFilePath()) !== rel) continue;
 
           const counts = new Map<string, number>();
           for (const id of body.getDescendantsOfKind(SyntaxKind.Identifier)) {
@@ -358,6 +365,11 @@ export function createTsAnalyzer(rootDir: string, files: SourceFile[]): TsAnalyz
 
             const name = nameNode.getText();
             if (!name || name.startsWith('_')) continue;
+
+            // 若该名字在整个文件里出现得比本函数体多，说明它被模块级或其他函数引用——
+            // 这是外层变量（type-fest 的 module-level Map 曾因此误报 180 条）
+            if ((globalCounts.get(name) ?? 0) > (counts.get(name) ?? 0)) continue;
+
             if ((counts.get(name) ?? 0) <= 1) {
               out.push({
                 file: rel,
